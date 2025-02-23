@@ -1,0 +1,75 @@
+# Docker Compose configuration for Elasticsearch and Kibana stack
+# This file defines a multi-container application with Elasticsearch and Kibana services
+
+services:
+  # Elasticsearch service configuration
+  # Single-node setup with security enabled
+  es01:
+    # Image selection based on BUILD_CUSTOM environment variable
+    image: ${BUILD_CUSTOM:-docker.elastic.co/elasticsearch/elasticsearch}:${STACK_VERSION}
+    build:
+      context: .
+      dockerfile: Dockerfile
+      # Only build if BUILD_CUSTOM is set to true
+      target: ${BUILD_CUSTOM:+custom}
+    container_name: es01
+    environment:
+      # Set Elasticsearch version
+      - STACK_VERSION=${STACK_VERSION}
+      # Enable X-Pack security features for authentication
+      - xpack.security.enabled=false
+      # Configure as single-node cluster
+      - discovery.type=single-node
+      # Set Elasticsearch password from environment variable
+      - ELASTIC_PASSWORD=${ELASTIC_PASSWORD}
+      # Configure JVM heap size for better performance
+      - ES_JAVA_OPTS=${JAVA_OPTS}
+    mem_limit: ${MEM_LIMIT}
+    # Remove memory limits for Elasticsearch
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    ports:
+      # Expose Elasticsearch HTTP API port
+      - ${ES_PORT}:9200
+    volumes:
+      # Persist Elasticsearch data
+      - es-data:/usr/share/elasticsearch/data
+
+  # Kibana service configuration
+  # Web interface for managing and visualizing Elasticsearch data
+  kibana:
+    image: docker.elastic.co/kibana/kibana:${STACK_VERSION}
+    container_name: kibana
+    ports:
+      # Expose Kibana web interface port
+      - ${KIBANA_PORT}:5601
+    environment:
+      # Configure Elasticsearch connection
+      - ELASTICSEARCH_HOSTS=http://es01:9200
+      # Enable security features for Kibana
+      - xpack.security.enabled=true
+      # Configure authentication providers (basic auth)
+      - xpack.security.authc.providers=["basic"]
+      # Set Kibana username from environment variable
+      - ELASTICSEARCH_USERNAME=${KIBANA_USERNAME}
+      # Set Kibana password from environment variable
+      - ELASTICSEARCH_PASSWORD=${KIBANA_PASSWORD}
+      # Set interface language
+      - I18N_LOCALE=${I18N_LOCALE}
+    mem_limit: ${MEM_LIMIT}
+    # Ensure Elasticsearch is started before Kibana
+    depends_on:
+      - es01
+    volumes:
+      # Persist Elasticsearch data
+      - kibana-data:/usr/share/kibana/data
+
+
+# Volume configuration for persistent data storage
+volumes:
+  es-data:
+    driver: local
+  kibana-data:
+    driver: local
