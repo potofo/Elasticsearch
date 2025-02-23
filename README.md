@@ -27,9 +27,9 @@ cp .env.example .env
 
 2. Configure `.env` file:
 ```env
-STACK_VERSION=8.12.0
+STACK_VERSION=8.17.0
 ELASTIC_PASSWORD=your_password
-MEM_LIMIT=4g
+MEM_LIMIT=1073741824
 ES_PORT=9200
 KIBANA_PORT=5601
 ```
