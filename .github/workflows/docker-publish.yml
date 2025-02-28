@@ -7,7 +7,7 @@ on:
     branches: [ "main" ]
 
 env:
-  DOCKER_IMAGE: ${{ secrets.DOCKER_USERNAME }}/Elasticsearch
+  DOCKER_IMAGE: ${{ secrets.DOCKER_USERNAME }}/elasticsearch
 
 jobs:
   build-and-push:
