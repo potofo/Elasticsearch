@@ -22,7 +22,6 @@
 ```bash
 git clone <repository-url>
 cd <repository-name>
-cp .env.example .env
 ```
 
 2. 環境変数の設定（.envファイル）：
@@ -36,20 +35,26 @@ KIBANA_PORT=5601
 
 3. サービスの起動：
 
-公式イメージを使用する場合（推奨）：
+カスタム済みのイメージを使用する場合（推奨）：
 ```bash
 docker compose up -d
 ```
 
+公式イメージを使用する場合（推奨）：
+```bash
+docker compose -f docker-compose.build.yml up -d
+```
+
 kuromojiを含むカスタムビルドを使用する場合：
 ```bash
-docker compose build
-docker compose up -d
+docker compose -f docker-compose.build.yml build
+docker compose -f docker-compose.build.yml up -d
 ```
 
 4. 動作確認：
 ```bash
 curl http://localhost:9200
+curl http://localhost:5601
 ```
 
 ## 環境変数の説明

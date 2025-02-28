@@ -22,7 +22,6 @@ A Docker-based Elasticsearch setup with Kuromoji (Japanese language) analysis pl
 ```bash
 git clone <repository-url>
 cd <repository-name>
-cp .env.example .env
 ```
 
 2. Configure `.env` file:
@@ -36,15 +35,20 @@ KIBANA_PORT=5601
 
 3. Start services:
 
-Using official image:
+Using customed docker image with kuromoji (recommended):
 ```bash
 docker compose up -d
 ```
 
-Using custom build that includes kuromoji:
+Using official image:
 ```bash
-docker compose build
-docker compose up -d
+docker compose -f docker-compose.build.yml up -d
+```
+
+Using custom build with kuromoji:
+```bash
+docker compose -f docker-compose.build.yml build
+docker compose -f docker-compose.build.yml up -d
 ```
 
 4. Verify:

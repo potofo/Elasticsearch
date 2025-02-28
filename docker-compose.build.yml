@@ -6,7 +6,12 @@ services:
   # Single-node setup with security enabled
   es01:
     # Image selection based on BUILD_CUSTOM environment variable
-    image: potofo/elasticsearch:${STACK_VERSION}
+    image: ${BUILD_CUSTOM:-docker.elastic.co/elasticsearch/elasticsearch}:${STACK_VERSION}
+    build:
+      context: .
+      dockerfile: Dockerfile
+      # Only build if BUILD_CUSTOM is set to true
+      target: ${BUILD_CUSTOM:+custom}
     container_name: es01
     environment:
       # Set Elasticsearch version
